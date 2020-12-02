@@ -2625,7 +2625,9 @@ def forward_model(
                 with open("/home/zhuhan/NasStore/pytorch-kaldi/exp/chime3/forward/chime3_GRU_4layer_mfcc_train_tr05_orig_clean_forward_tr05_orig_clean/temp_" + str(temp) + "_soft_label_embedding.pkl", 'rb') as f_in:
                # with open("/home/zhuhan/NasStore/pytorch-kaldi/exp/commonvoice/forward/commonvoice_GRU_4layer_mfcc_train_us_30000_forward_us_30000/temp_" + str(temp) + "_soft_label_embedding.pkl", 'rb') as f_in:
                     numpy_embedding = pickle.load(f_in)
-                lab_dnn = torch.from_numpy(numpy_embedding.astype(np.float32)).cuda()
+                embeds = nn.Embedding.from_pretrained(torch.from_numpy(numpy_embedding), freeze=True)
+                embeds.cuda()
+                lab_dnn = embeds(lab_dnn)
                 outs_dict[out_name] = costs[out_name](out, lab_dnn)
 
 
